@@ -142,3 +142,41 @@ CREATE TABLE order_status (
     status_name VARCHAR(100) NOT NULL UNIQUE
 );
 
+--  Creating Roles
+CREATE ROLE 'customer';
+CREATE ROLE 'employee';
+CREATE ROLE 'admin';
+
+--  Granting privileges to roles
+
+-- Customers should only view data
+GRANT SELECT ON bookstore.* TO 'customer';
+
+-- Employees can read and modify book, order, and author info
+GRANT SELECT, INSERT, UPDATE, DELETE ON 
+    bookstore.books,
+    bookstore.book_author,
+    bookstore.author,
+    bookstore.order_line,
+    bookstore.cust_order
+TO 'employee';
+
+-- Admin can do everything
+GRANT ALL PRIVILEGES ON bookstore.* TO 'admin' WITH GRANT OPTION;
+
+-- Create Users and Assign Roles
+
+-- Example Customer
+CREATE USER 'msomaji'@'localhost' IDENTIFIED BY 'read123';
+GRANT 'customer' TO 'msomaji'@'localhost';
+SET DEFAULT ROLE 'customer' TO 'msomaji'@'localhost';
+
+-- Example Employee
+CREATE USER 'kazi'@'localhost' IDENTIFIED BY 'write456';
+GRANT 'employee' TO 'kazi'@'localhost';
+SET DEFAULT ROLE 'employee' TO 'kazi'@'localhost';
+
+-- Example Admin 
+CREATE USER 'boss'@'localhost' IDENTIFIED BY 'rootaccess';
+GRANT 'admin' TO 'boss'@'localhost';
+SET DEFAULT ROLE 'admin' TO 'boss'@'localhost';
